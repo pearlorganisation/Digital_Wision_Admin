@@ -1,31 +1,40 @@
-// AddPartner.jsx
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addPartner, getAllPartners } from "../../features/actions/partnerAction";
 
 const AddPartner = () => {
   const dispatch = useDispatch();
-  const [title, setTitle] = useState("");
-  const [image, setImage] = useState(null);
+  const [partnerData, setPartnerData] = useState({
+    title: "",
+    image: null 
+});
+
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setPartnerData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageChange = (e) => {
+
+    console.log("12123123",e.target.files[0]);
+    setPartnerData((prev) => ({ ...prev, image: e.target.files[0] }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!image) {
+
+    if (!partnerData.image) {
       alert("Please select an image");
       return;
     }
 
     setIsSubmitting(true);
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("image", image);
 
-    dispatch(addPartner({title, image})).then(() => {
-      dispatch(getAllPartners()); 
-      setTitle(""); 
-      setImage(null); 
+    dispatch(addPartner(partnerData)).then(() => {
+      dispatch(getAllPartners());
+      setPartnerData({ title: "", image: null });
       setIsSubmitting(false);
     });
   };
@@ -36,16 +45,17 @@ const AddPartner = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
+          name="title"
           placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          value={partnerData.title}
+          onChange={handleChange}
           required
           className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
         <input
           type="file"
           accept="image/*"
-          onChange={(e) => setImage(e.target.files[0])}
+          onChange={handleImageChange}
           required
           className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
@@ -66,3 +76,4 @@ const AddPartner = () => {
 };
 
 export default AddPartner;
+

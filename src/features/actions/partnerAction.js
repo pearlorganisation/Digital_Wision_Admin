@@ -99,7 +99,7 @@ export const addPartner = createAsyncThunk(
           "Content-Type": "multipart/form-data",
         },
       };
-      const { data } = await axiosInstance.post(`/parters`, formData, {
+      const { data } = await axiosInstance.post(`/partners`, formData, {
         config,
       });
 
