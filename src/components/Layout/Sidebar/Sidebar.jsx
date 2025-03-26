@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
 import { NavLink } from "react-router-dom";
-import { FaBars, FaHome, FaBullseye } from "react-icons/fa";
+import  { motion } from "framer-motion";
+import { FaBars, FaHome} from "react-icons/fa";
 import {
   MdPeople,
   MdGroup,
   MdAddBox,
-  MdLibraryBooks,
-  MdMic,
+
 } from "react-icons/md";
 
 import { useState } from "react";

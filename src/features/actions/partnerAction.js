@@ -12,8 +12,8 @@ export const getAllPartners = createAsyncThunk(
         },
       };
       const { data } = await axiosInstance.get(`/partners`, config);
-
-      return data;
+      
+      return data.data
     } catch (error) {
       if (error.response && error.response.data.message) {
         toast.error(error.response.data.message, { position: "top-center" });

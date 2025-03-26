@@ -40,8 +40,7 @@ const partnersSlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.isLoading = false;
-        state.teamInfo = action.payload.data;
-        state.pagination = action.payload.pagination;
+        state.partnerInfo = action.payload;
         toast.success("All Partners recieved", { position: "top-right" });
       })
 

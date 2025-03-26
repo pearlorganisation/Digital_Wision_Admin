@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 import { adminLogout } from "../../../features/actions/authAction";
 import { logout } from "../../../features/slices/authSlice";
+import logo from "../../../assets/logo.jpg"
 
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -44,11 +45,11 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="bg-[#fbf4fd] text-black shadow-md border-b-4 border-[#3e8abd]">
+    <header className="bg-white text-black shadow-md border-b-4 border-[#3ebda1]">
       <div className="flex items-center justify-between px-6 py-4">
         {/* Logo Section */}
         <img
-          src="https://img.freepik.com/free-vector/bird-colorful-logo-gradient-vector_343694-1365.jpg"
+          src={logo}
           className="w-44 h-16"
           alt="Logo"
         />

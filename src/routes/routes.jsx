@@ -6,6 +6,9 @@ import Dashboard from "../pages/Dashboard/Dashboard";
 import Login from "../pages/Login/Login";
 import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
 import Layout from "../components/Layout/Layout";
+import ListPartner from "../pages/Partners/ListPartner";
+import AddPartner from "../pages/Partners/AddPartner";
+import EditPartner from "../pages/Partners/EditPartner";
 
 const Routes = createBrowserRouter([
   {
@@ -30,6 +33,19 @@ const Routes = createBrowserRouter([
         index: true,
         element: <Dashboard />,
       },
+      {
+        path:"/partners",
+        element: <ListPartner/>
+      },
+      {
+        path:"/partners/add-partner",
+        element: <AddPartner/>
+      },
+      {
+        path:"/partners/edit-partner/:id",
+        element: <EditPartner/>
+      },
+
     ],
   },
 ]);
