@@ -59,7 +59,7 @@ const partnersSlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.isLoading = false;
-        state.team = action.payload.data;
+        state.partner = action.payload.data;
         toast.success("Single Partner recieved", { position: "top-right" });
       })
 

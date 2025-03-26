@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllPartners, deletePartner, updatePartner } from "../../features/actions/partnerAction";
+import {
+  getAllPartners,
+  deletePartner,
+  updatePartner,
+} from "../../features/actions/partnerAction";
 import { FaEye } from "react-icons/fa";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
-
 const ListPartner = () => {
   const dispatch = useDispatch();
-  const { partnerInfo, isLoading, isError } = useSelector((state) => state.partners);
+  const { partnerInfo, isLoading, isError } = useSelector(
+    (state) => state.partners
+  );
   const [selectedPartner, setSelectedPartner] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [title, setTitle] = useState("");
@@ -28,7 +33,7 @@ const ListPartner = () => {
     });
   };
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleEdit = (partner) => {
     setEditMode(true);
@@ -38,20 +43,30 @@ const ListPartner = () => {
 
   const handleUpdate = (e) => {
     e.preventDefault();
-    dispatch(updatePartner({ id: selectedPartner._id, title, image })).then(() => {
-      dispatch(getAllPartners());
-      setEditMode(false);
-      setSelectedPartner(null);
-      setTitle("");
-      setImage(null);
-    });
+    dispatch(updatePartner({ id: selectedPartner._id, title, image })).then(
+      () => {
+        dispatch(getAllPartners());
+        setEditMode(false);
+        setSelectedPartner(null);
+        setTitle("");
+        setImage(null);
+      }
+    );
   };
 
   if (isLoading)
-    return <p className="text-center text-lg font-semibold text-blue-500">Loading...</p>;
+    return (
+      <p className="text-center text-lg font-semibold text-blue-500">
+        Loading...
+      </p>
+    );
 
   if (isError)
-    return <p className="text-center text-lg font-semibold text-red-500">Error loading partners</p>;
+    return (
+      <p className="text-center text-lg font-semibold text-red-500">
+        Error loading partners
+      </p>
+    );
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -71,16 +86,39 @@ const ListPartner = () => {
           <tbody>
             {partnerInfo?.map((partner, index) => (
               <tr key={partner._id} className="text-center">
-                <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
                 <td className="border border-gray-300 px-4 py-2">
-                  <img src={partner.image?.secure_url} alt={partner.title} className="w-16 h-16 object-cover border border-gray-300 mx-auto" />
+                  {index + 1}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">{partner.title}</td>
+                <td className="border border-gray-300 px-4 py-2">
+                  <img
+                    src={partner.image?.secure_url}
+                    alt={partner.title}
+                    className="w-16 h-16 object-cover border border-gray-300 mx-auto"
+                  />
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {partner.title}
+                </td>
                 <td className="border border-gray-300 px-1 py-2 space-x-1">
-                  <button onClick={() => setSelectedPartner(partner)} className="px-3 py-1 bg-blue-500 text-white rounded-md"><FaEye />
+                  <button
+                    onClick={() => setSelectedPartner(partner)}
+                    className="px-3 py-1 bg-blue-500 text-white rounded-md"
+                  >
+                    <FaEye />
                   </button>
-                  <button onClick={() => navigate(`/partners/edit-partner/${partner?._id}}`)} className="px-3 py-1 bg-yellow-500 text-white rounded-md"><FaRegEdit /></button>
-                  <button onClick={() => handleDelete(partner._id)} className="px-3 py-1 bg-red-500 text-white rounded-md"><MdDelete />
+                  <button
+                    onClick={() =>
+                      navigate(`/partners/edit-partner/${partner?._id}`)
+                    }
+                    className="px-3 py-1 bg-yellow-500 text-white rounded-md"
+                  >
+                    <FaRegEdit />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(partner._id)}
+                    className="px-3 py-1 bg-red-500 text-white rounded-md"
+                  >
+                    <MdDelete />
                   </button>
                 </td>
               </tr>
@@ -92,18 +130,50 @@ const ListPartner = () => {
       {selectedPartner && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
-            <button onClick={() => { setSelectedPartner(null); setEditMode(false); }} className="absolute top-2 right-2 bg-gray-500 text-white rounded-full w-6 h-6 flex items-center justify-center">&times;</button>
-            <h3 className="text-xl font-bold text-center mb-4">Partner Details</h3>
+            <button
+              onClick={() => {
+                setSelectedPartner(null);
+                setEditMode(false);
+              }}
+              className="absolute top-2 right-2 bg-gray-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+            >
+              &times;
+            </button>
+            <h3 className="text-xl font-bold text-center mb-4">
+              Partner Details
+            </h3>
             {editMode ? (
               <form onSubmit={handleUpdate} className="mt-4 space-y-2 w-full">
-                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required className="w-full p-2 border rounded-lg" />
-                <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files[0])} className="w-full p-2 border rounded-lg" />
-                <button type="submit" className="w-full bg-green-700 text-white py-2 rounded-lg">Save Changes</button>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                  className="w-full p-2 border rounded-lg"
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setImage(e.target.files[0])}
+                  className="w-full p-2 border rounded-lg"
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-green-700 text-white py-2 rounded-lg"
+                >
+                  Save Changes
+                </button>
               </form>
             ) : (
               <div className="flex flex-col items-center">
-                <img src={selectedPartner.image?.secure_url} alt={selectedPartner.title} className="w-32 h-32 object-cover  border border-gray-300" />
-                <p className="text-lg font-medium text-gray-700 mt-2">{selectedPartner.title}</p>
+                <img
+                  src={selectedPartner.image?.secure_url}
+                  alt={selectedPartner.title}
+                  className="w-32 h-32 object-cover  border border-gray-300"
+                />
+                <p className="text-lg font-medium text-gray-700 mt-2">
+                  {selectedPartner.title}
+                </p>
               </div>
             )}
           </div>
@@ -114,7 +184,6 @@ const ListPartner = () => {
 };
 
 export default ListPartner;
-
 
 // import React, { useEffect, useState } from "react";
 // import { useDispatch, useSelector } from "react-redux";
