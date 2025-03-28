@@ -5,8 +5,7 @@ import {
   deletePartner,
   updatePartner,
 } from "../../features/actions/partnerAction";
-import { FaEye } from "react-icons/fa";
-import { FaRegEdit } from "react-icons/fa";
+import { FaEye, FaRegEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
@@ -15,43 +14,62 @@ const ListPartner = () => {
   const { partnerInfo, isLoading, isError } = useSelector(
     (state) => state.partners
   );
-  const [selectedPartner, setSelectedPartner] = useState(null);
-  const [editMode, setEditMode] = useState(false);
-  const [title, setTitle] = useState("");
-  const [image, setImage] = useState(null);
+  
+  const [state, setState] = useState({
+    selectedPartner: null,
+    showDeleteConfirm: false,
+    deletePartnerId: null,
+    editMode: false,
+    title: "",
+    image: null,
+  });
+
+  
 
   useEffect(() => {
     dispatch(getAllPartners());
   }, [dispatch]);
 
-  console.log(partnerInfo, "my partners");
+  // console.log(partnerInfo, "my partners");
 
-  const handleDelete = (partnerId) => {
-    dispatch(deletePartner(partnerId)).then(() => {
-      dispatch(getAllPartners());
-      setSelectedPartner(null);
-    });
-  };
+  const handleDeleteClick = (partnerId) => {
+    setState((prevState) => ({...prevState, showDeleteConfirm: true, deletePartnerId: partnerId}));
+  }
 
   const navigate = useNavigate();
 
+  const confirmDelete = () => {
+    dispatch(deletePartner(state.deletePartnerId)).then(() => {
+      dispatch(getAllPartners());
+      setState((prevState) => ({...prevState, showDeleteConfirm: false, deletePartnerId: null}));
+    });
+  }
+
+  const handleView = (partner) => {
+    setState((prevState) => ({ ...prevState, selectedPartner: partner }));
+  };
+
   const handleEdit = (partner) => {
-    setEditMode(true);
-    setTitle(partner.title);
-    setSelectedPartner(partner);
+    setState((prevState) => ({
+      ...prevState,
+      editMode: true,
+      title: partner.title,
+      selectedPartner: partner,
+    }));
   };
 
   const handleUpdate = (e) => {
     e.preventDefault();
-    dispatch(updatePartner({ id: selectedPartner._id, title, image })).then(
-      () => {
-        dispatch(getAllPartners());
-        setEditMode(false);
-        setSelectedPartner(null);
-        setTitle("");
-        setImage(null);
-      }
-    );
+    dispatch(updatePartner({ id: state.selectedPartner._id, title: state.title, image: state.image })).then(() => {
+      dispatch(getAllPartners());
+      setState((prevState) => ({
+        ...prevState,
+        editMode: false,
+        selectedPartner: null,
+        title: "",
+        image: null,
+      }));
+    });
   };
 
   if (isLoading)
@@ -86,38 +104,19 @@ const ListPartner = () => {
           <tbody>
             {partnerInfo?.map((partner, index) => (
               <tr key={partner._id} className="text-center">
+                <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {index + 1}
+                  <img src={partner.image?.secure_url} alt={partner.title} className="w-16 h-16 object-cover border border-gray-300 mx-auto" />
                 </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  <img
-                    src={partner.image?.secure_url}
-                    alt={partner.title}
-                    className="w-16 h-16 object-cover border border-gray-300 mx-auto"
-                  />
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {partner.title}
-                </td>
+                <td className="border border-gray-300 px-4 py-2">{partner.title}</td>
                 <td className="border border-gray-300 px-1 py-2 space-x-1">
-                  <button
-                    onClick={() => setSelectedPartner(partner)}
-                    className="px-3 py-1 bg-blue-500 text-white rounded-md"
-                  >
+                  <button onClick={() => handleView(partner)} className="px-3 py-1 text-blue-500 bg-gray-100 rounded-full">
                     <FaEye />
                   </button>
-                  <button
-                    onClick={() =>
-                      navigate(`/partners/edit-partner/${partner?._id}`)
-                    }
-                    className="px-3 py-1 bg-yellow-500 text-white rounded-md"
-                  >
+                  <button onClick={() => navigate(`/partners/edit-partner/${partner?._id}`)} className="px-3 py-1 bg-gray-100 text-green-700 rounded-full">
                     <FaRegEdit />
                   </button>
-                  <button
-                    onClick={() => handleDelete(partner._id)}
-                    className="px-3 py-1 bg-red-500 text-white rounded-md"
-                  >
+                  <button onClick={() => handleDeleteClick(partner._id)} className="px-3 py-1 bg-gray-100 text-red-500 rounded-full">
                     <MdDelete />
                   </button>
                 </td>
@@ -127,55 +126,33 @@ const ListPartner = () => {
         </table>
       )}
 
-      {selectedPartner && (
+      {/* View Partner Popup */}
+      {state.selectedPartner && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
-            <button
-              onClick={() => {
-                setSelectedPartner(null);
-                setEditMode(false);
-              }}
-              className="absolute top-2 right-2 bg-gray-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-            >
+            <button onClick={() => setState((prevState) => ({ ...prevState, selectedPartner: null }))} className="absolute top-2 right-2 bg-gray-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
               &times;
             </button>
-            <h3 className="text-xl font-bold text-center mb-4">
-              Partner Details
-            </h3>
-            {editMode ? (
-              <form onSubmit={handleUpdate} className="mt-4 space-y-2 w-full">
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  required
-                  className="w-full p-2 border rounded-lg"
-                />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setImage(e.target.files[0])}
-                  className="w-full p-2 border rounded-lg"
-                />
-                <button
-                  type="submit"
-                  className="w-full bg-green-700 text-white py-2 rounded-lg"
-                >
-                  Save Changes
-                </button>
-              </form>
-            ) : (
-              <div className="flex flex-col items-center">
-                <img
-                  src={selectedPartner.image?.secure_url}
-                  alt={selectedPartner.title}
-                  className="w-32 h-32 object-cover  border border-gray-300"
-                />
-                <p className="text-lg font-medium text-gray-700 mt-2">
-                  {selectedPartner.title}
-                </p>
-              </div>
-            )}
+            <h3 className="text-xl font-bold text-center mb-4">Partner Details</h3>
+            <img src={state.selectedPartner.image?.secure_url} alt={state.selectedPartner.title} className="w-32 h-32 object-cover border border-gray-300 mx-auto" />
+            <p className="text-lg font-medium text-gray-700 mt-2 text-center">{state.selectedPartner.title}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Popup */}
+      {state.showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
+            <h3 className="text-xl font-bold text-center mb-4">Are you sure you want to delete?</h3>
+            <div className="flex justify-center space-x-4">
+              <button onClick={() => setState((prevState) => ({ ...prevState, showDeleteConfirm: false }))} className="px-4 py-2 bg-gray-400 text-white rounded-md">
+                Cancel
+              </button>
+              <button onClick={confirmDelete} className="px-4 py-2 bg-red-600 text-white rounded-md">
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -184,107 +161,3 @@ const ListPartner = () => {
 };
 
 export default ListPartner;
-
-// import React, { useEffect, useState } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { getAllPartners, deletePartner, updatePartner } from "../../features/actions/partnerAction";
-
-// const ListPartner = () => {
-//   const dispatch = useDispatch();
-//   const { partnerInfo, isLoading, isError } = useSelector((state) => state.partners);
-//   const [selectedPartner, setSelectedPartner] = useState(null);
-//   const [editMode, setEditMode] = useState(false);
-//   const [title, setTitle] = useState("");
-//   const [image, setImage] = useState(null);
-
-//   useEffect(() => {
-//     dispatch(getAllPartners());
-//   }, [dispatch]);
-
-//   console.log(partnerInfo, "my partners");
-
-//   const handleDelete = (partnerId) => {
-//     dispatch(deletePartner(partnerId)).then(() => {
-//       dispatch(getAllPartners());
-//       setSelectedPartner(null);
-//     });
-//   };
-
-//   const handleEdit = (partner) => {
-//     setEditMode(true);
-//     setTitle(partner.title);
-//     setSelectedPartner(partner);
-//   };
-
-//   const handleUpdate = (e) => {
-//     e.preventDefault();
-//     const formData = new FormData();
-//     formData.append("title", title);
-//     if (image) formData.append("image", image[0]);
-
-//     console.log(title, image, "form data");
-//     // return;
-//     dispatch(updatePartner({ id: selectedPartner._id, data: formData })).then(
-//       () => {
-//         dispatch(getAllPartners());
-//         setEditMode(false);
-//         setSelectedPartner(null);
-//         setTitle("");
-//         setImage(null);
-//       }
-//     );
-//   };
-
-//   if (isLoading)
-//     return <p className="text-center text-lg font-semibold text-blue-500">Loading...</p>;
-
-//   if (isError)
-//     return <p className="text-center text-lg font-semibold text-red-500">Error loading partners</p>;
-
-//   return (
-//     <div className="max-w-4xl mx-auto p-4">
-//       <h2 className="text-2xl font-bold text-center mb-4">Partners List</h2>
-//       {partnerInfo?.length === 0 ? (
-//         <p className="text-center text-gray-600">No partners added yet.</p>
-//       ) : (
-//         <ul className="grid grid-cols-1 md:grid-cols-1 gap-4">
-//           {partnerInfo?.map((partner) => (
-//             <li key={partner._id} className="bg-gray-100 shadow-md rounded-lg p-2 flex items-center space-x-4">
-//               <img src={partner.image?.secure_url} alt={partner.title} className="w-16 h-16 object-cover border border-gray-300" />
-//               <p className="text-lg font-medium text-gray-700">{partner.title}</p>
-//               <button onClick={() => setSelectedPartner(partner)} className="px-3 py-1 bg-blue-500 text-white rounded-md">View</button>
-//             </li>
-//           ))}
-//         </ul>
-//       )}
-
-//       {selectedPartner && (
-//         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-//           <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
-//             <button onClick={() => { setSelectedPartner(null); setEditMode(false); }} className="absolute top-2 right-2 bg-gray-500 text-white rounded-full w-6 h-6 flex items-center justify-center">&times;</button>
-//             <h3 className="text-xl font-bold text-center mb-4">Partner Details</h3>
-//             <div className="flex flex-col items-center">
-//               <img src={selectedPartner.image?.secure_url} alt={selectedPartner.title} className="w-32 h-32 object-cover rounded-full border border-gray-300" />
-//               <p className="text-lg font-medium text-gray-700 mt-2">{selectedPartner.title}</p>
-
-//               {editMode ? (
-//                 <form onSubmit={handleUpdate} className="mt-4 space-y-2 w-full">
-//                   <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required className="w-full p-2 border rounded-lg" />
-//                   <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files[0])} className="w-full p-2 border rounded-lg" />
-//                   <button type="submit" className="w-full bg-green-500 text-white py-2 rounded-lg">Save Changes</button>
-//                 </form>
-//               ) : (
-//                 <div className="mt-4 flex space-x-4">
-//                   <button onClick={() => handleEdit(selectedPartner)} className="px-4 py-2 bg-yellow-500 text-white rounded-lg">Edit</button>
-//                   <button onClick={() => handleDelete(selectedPartner._id)} className="px-4 py-2 bg-red-500 text-white rounded-lg">Delete</button>
-//                 </div>
-//               )}
-//             </div>
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default ListPartner;
