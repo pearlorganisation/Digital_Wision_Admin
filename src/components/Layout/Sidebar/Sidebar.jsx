@@ -1,13 +1,8 @@
 /* eslint-disable react/prop-types */
 import { NavLink } from "react-router-dom";
-import  { motion } from "framer-motion";
-import { FaBars, FaHome} from "react-icons/fa";
-import {
-  MdPeople,
-  MdGroup,
-  MdAddBox,
-
-} from "react-icons/md";
+import { motion } from "framer-motion";
+import { FaBars, FaHome } from "react-icons/fa";
+import { MdPeople, MdGroup, MdAddBox } from "react-icons/md";
 
 import { useState } from "react";
 import SidebarMenu from "./SidebarMenu";
@@ -27,6 +22,19 @@ const routes = [
       {
         path: "/partners/add-partner",
         name: "Add Partner",
+        icon: <MdAddBox />,
+      },
+    ],
+  },
+  {
+    path: "/reviews",
+    name: "Reviews",
+    icon: <MdPeople />,
+    subRoutes: [
+      { path: "/reviews", name: "List Reviews", icon: <MdGroup /> },
+      {
+        path: "/reviews/add-review",
+        name: "Add Review",
         icon: <MdAddBox />,
       },
     ],

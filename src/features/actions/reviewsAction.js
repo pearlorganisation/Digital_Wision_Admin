@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import axiosInstance from "../../axiosInstance";
 
-export const getAllPartners = createAsyncThunk(
+export const getAllReviews = createAsyncThunk(
   "get/partners",
   async (_, { rejectWithValue }) => {
     try {
@@ -11,7 +11,7 @@ export const getAllPartners = createAsyncThunk(
           "Content-Type": "application/json",
         },
       };
-      const { data } = await axiosInstance.get(`/partners`, config);
+      const { data } = await axiosInstance.get(`/reviews`, config);
 
       return data.data;
     } catch (error) {
@@ -26,8 +26,8 @@ export const getAllPartners = createAsyncThunk(
   }
 );
 
-export const getSinglePartner = createAsyncThunk(
-  "get-single/partner",
+export const getSingleReview = createAsyncThunk(
+  "get-single/review",
   async (id, { rejectWithValue }) => {
     try {
       const config = {
@@ -35,7 +35,7 @@ export const getSinglePartner = createAsyncThunk(
           "Content-Type": "application/json",
         },
       };
-      const { data } = await axiosInstance.get(`/partners/${id}`, config);
+      const { data } = await axiosInstance.get(`/reviews/${id}`, config);
 
       return data;
     } catch (error) {
@@ -50,8 +50,8 @@ export const getSinglePartner = createAsyncThunk(
   }
 );
 
-export const deletePartner = createAsyncThunk(
-  "delete/partner",
+export const deleteReview = createAsyncThunk(
+  "delete/review",
   async (id, { rejectWithValue }) => {
     try {
       const config = {
@@ -59,9 +59,9 @@ export const deletePartner = createAsyncThunk(
           "Content-Type": "application/json",
         },
       };
-      const { data } = await axiosInstance.delete(`/partners/${id}`, config);
+      const { data } = await axiosInstance.delete(`/reviews/${id}`, config);
 
-      toast.success("Partner deleted Successfully", {
+      toast.success("Review deleted Successfully", {
         position: "top-right",
       });
       return id;
@@ -77,21 +77,21 @@ export const deletePartner = createAsyncThunk(
   }
 );
 
-export const addPartner = createAsyncThunk(
-  "partners/addPartner",
+export const addReview = createAsyncThunk(
+  "reviews/addReview",
   async (formData, { rejectWithValue }) => {
     try {
       const config = {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
       };
-      const { data } = await axiosInstance.post(`/partners`, formData, config);
+      const { data } = await axiosInstance.post(`/reviews`, formData, config);
 
-      toast.success("Partner added successfully!", { position: "top-right" });
+      toast.success("Review added successfully!", { position: "top-right" });
       return data;
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to add partner", {
+      toast.error(error.response?.data?.message || "Failed to add review", {
         position: "top-right",
       });
       return rejectWithValue(error.response?.data?.message || error.message);
@@ -99,40 +99,25 @@ export const addPartner = createAsyncThunk(
   }
 );
 
-export const updatePartner = createAsyncThunk(
-  "update/Partner",
+export const updateReview = createAsyncThunk(
+  "update/Review",
   async ({ id, updatedData }, { rejectWithValue }) => {
     try {
-      const formData = new FormData();
-      formData.append("image", updatedData.image[0]);
-
-      for (const key in updatedData) {
-        if (key !== "image") {
-          if (
-            typeof updatedData[key] === "object" &&
-            updatedData[key] !== null
-          ) {
-            formData.append(key, JSON.stringify(updatedData[key]));
-          } else {
-            formData.append(key, updatedData[key]);
-          }
-        }
-      }
       const config = {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
       };
       const { data } = await axiosInstance.patch(
-        `/partners/${id}`,
-        formData,
+        `/reviews/${id}`,
+        updatedData,
         config
       );
 
-      toast.success("Partner updated Successfully", {
+      toast.success("Review updated Successfully", {
         position: "top-right",
       });
-      return data; // Return the updated destination
+      return data;
     } catch (error) {
       if (error.response && error.response.data.message) {
         toast.error(error.response.data.message, { position: "top-center" });

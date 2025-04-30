@@ -98,8 +98,8 @@ const partnersSlice = createSlice({
         state.isSuccess = true;
         state.isLoading = false;
 
-        state.teamInfo = state.teamInfo.filter(
-          (team) => team._id !== action.meta.arg
+        state.partnerInfo = state.partnerInfo.filter(
+          (partner) => partner._id !== action.meta.arg
         );
         toast.success("Partner deleted Successfully", {
           position: "top-right",
@@ -122,7 +122,7 @@ const partnersSlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
 
-        state.team = action.payload;
+        state.partner = action.payload;
 
         toast.success("Partner updated successfully", {
           position: "top-right",

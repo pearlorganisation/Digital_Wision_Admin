@@ -6,6 +6,7 @@ import persistStore from "redux-persist/es/persistStore";
 
 import partnersReducer from "../features/slices/partnersSlice";
 import authReducer from "../features/slices/authSlice";
+import reviewsReducer from "../features/slices/reviewsSlice";
 
 const persistConfig = {
   key: "Digital_Wison_Admin",
@@ -26,6 +27,7 @@ const persistConfig = {
 const reducer = combineReducers({
   partners: partnersReducer,
   auth: authReducer,
+  reviews: reviewsReducer,
 });
 
 const rootReducer = (state, action) => {

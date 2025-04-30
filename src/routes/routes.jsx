@@ -9,6 +9,10 @@ import Layout from "../components/Layout/Layout";
 import ListPartner from "../pages/Partners/ListPartner";
 import AddPartner from "../pages/Partners/AddPartner";
 import EditPartner from "../pages/Partners/EditPartner";
+import ListReviews from "../pages/Reviews/ListReviews";
+import AddReview from "../pages/Reviews/AddReview";
+import EditReview from "../pages/Reviews/EditReview";
+import ViewReview from "../pages/Reviews/ViewReview";
 
 const Routes = createBrowserRouter([
   {
@@ -34,18 +38,33 @@ const Routes = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path:"/partners",
-        element: <ListPartner/>
+        path: "/partners",
+        element: <ListPartner />,
       },
       {
-        path:"/partners/add-partner",
-        element: <AddPartner/>
+        path: "/partners/add-partner",
+        element: <AddPartner />,
       },
       {
-        path:"/partners/edit-partner/:id",
-        element: <EditPartner/>
+        path: "/partners/edit-partner/:id",
+        element: <EditPartner />,
       },
-
+      {
+        path: "/reviews",
+        element: <ListReviews />,
+      },
+      {
+        path: "/reviews/add-review",
+        element: <AddReview />,
+      },
+      {
+        path: "/reviews/edit-review/:id",
+        element: <EditReview />,
+      },
+      {
+        path: "/reviews/view-review/:id",
+        element: <ViewReview />,
+      },
     ],
   },
 ]);
